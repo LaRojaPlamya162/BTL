@@ -17,11 +17,11 @@ int main(int argc,char *argv[])
         game -> handleEvents();
         game ->update();
         game ->render();
-        frameTime = SDL_GetTicks() - frameStart;
-        if (frameDelay > frameTime)
-        {
-            SDL_Delay(frameDelay - frameTime);
-        }
+        //frameTime = SDL_GetTicks() - frameStart;
+        //if (frameDelay > frameTime)
+        //{
+            //SDL_Delay(frameDelay - frameTime);
+        //}
     }
     return 0;
 }
