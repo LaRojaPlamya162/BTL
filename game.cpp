@@ -1,17 +1,19 @@
 #include "game.h"
 #include "TextureManager.h"
 #include "GameObject.h"
-//#include "obstacle.h"
+#include "textobject.h"
+#include "audio.h"
+#include "highscore.h"
 #include "Map.h"
 GameObject* player;
 GameObject* obstacle;
-//Obstacle* obstacle;
-//SDL_Texture* texture;
-//GameObject* enemy;
+Text* text;
 TextureManager* border;
-TextureManager* background;
 SDL_Renderer* Game::renderer = nullptr;
 Map* map;
+Audio* audio;
+HighscoreManager* highscoremanager ;
+SDL_Color color = {255,255,255};
 Game::Game()
 {}
 Game::~Game()
@@ -39,18 +41,30 @@ void Game::init(const char *title,int xpos,int ypos,int width,int height,bool fu
         }
         isRunning = true;
         }
-        background = new TextureManager();
-        //enemy = new GameObject("foo.png",50,50);
+
+        /*if (TTF_Init()==-1)
+        {
+            text->success = false;
+        }
+        else
+        {
+            text->success = true;
+        }
+        if (text->success = false)
+        {
+            std::cout <<"Intialize fonts failed"<<std::endl;
+        }
+        else
+        {
+            std::cout <<"Intialize completed"<<std::endl;
+        }*/
         player =  new GameObject("Car.png",WINDOW_WIDTH,560);
         obstacle = new GameObject("ObstacleCar.png",NULL,NULL);
-        //obstacle = new GameObject("car.png","ObstacleCar.png",WINDOW_WIDTH*2/5,560);
-        //border = new TextureManager();
         map = new Map();
-        //playerTex = TextureManager::LoadTexture("pikachu.png",renderer);
-        /*else
-        {
-            isRunning = false;
-        }*/
+        text = new Text();
+        audio = new Audio();
+        //highscoremanager = new HighscoreManager();
+
     }
 void Game::handleEvents()
 {
@@ -100,25 +114,28 @@ void Game::update()
 {
     obstacle->ObstacleUpdate();
     player->PlayerUpdate();
-    SDL_Rect Player = player->PlayerGetRect();
-    SDL_Rect ObStacle = obstacle->ObstacleGetRect();
-    if (player->Collision(Player,ObStacle))
+    diem++;
+    if (player->CheckCollision(player->PlayerGetRect(),obstacle->ObstacleGetRect()))
     {
         SDL_DestroyWindow(window);
     }
-    //Obstacle->ObstacleUpdate();
-    //enemy -> Update();
-
+    /*if(highscoremanager->addHighscore(diem)&&!isRunning)
+    {
+        //std::cout << diem;
+    }
+*/
 }
 void Game::render()
 {
-    //SDL_RenderCopy(renderer,playerTex,NULL,NULL);
-    //SDL_RenderClear(Game::renderer);
+
+    std::string DIEM = std::to_string(diem);
     SDL_RenderClear(Game::renderer);
     map ->DrawMap();
     player->PlayerRender();
     obstacle->ObstacleRender();
     border ->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
+    text->RenderText("OpenSans-Bold.ttf",50,color,DIEM,360,0);
+    //audio->OpenAudio("GameSound.wav");
     SDL_RenderPresent(Game::renderer);
     }
 
