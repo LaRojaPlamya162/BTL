@@ -9,7 +9,8 @@ public :
     void ObstacleUpdate();
     void PlayerRender();
     void ObstacleRender();
-    bool Collision(SDL_Rect Object1,SDL_Rect Object2);
+    bool CheckCollision(SDL_Rect Object1,SDL_Rect Object2);
+    void Collision(SDL_Window* window);
     SDL_Rect PlayerGetRect();
     SDL_Rect ObstacleGetRect();
     bool MoveLeft = false;
@@ -29,13 +30,11 @@ private:
     int height;
     const int WINDOW_HEIGHT = 800;
     const int WINDOW_WIDTH = 800;
-    const int PATH_SIZE = 160;
-    const int PATH_JUMP = 120;
     const int CAR_WIDTH = 160;
     const int CAR_LENGTH = 240;
     SDL_Texture* m_texture;
     int yVelocity = 1;
-    const int maxVelocity = 5;
+    const int maxVelocity = 12;
 };
 
 
