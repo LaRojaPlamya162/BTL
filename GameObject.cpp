@@ -16,42 +16,42 @@ void GameObject::PlayerUpdate()
     //SDL_RenderClear(Game::renderer);
     if(MoveLeft)
         {
-            xpos=xpos-PATH_SIZE;
+            xpos=xpos-160;
             MoveLeft=false;
             SDL_Delay(10);
             if (xpos<0)
             {
-                xpos = xpos + PATH_SIZE;
+                xpos = xpos + 160;
             }
         }
     else if(MoveRight)
     {
-            xpos=xpos+PATH_SIZE;
+            xpos=xpos+160;
             MoveRight=false;
             SDL_Delay(10);
             if (xpos>WINDOW_WIDTH-CAR_WIDTH)
             {
-                xpos = xpos - PATH_SIZE;
+                xpos = xpos - 160;
             }
     }
     if(MoveUp)
     {
-        ypos=ypos-PATH_JUMP;
+        ypos=ypos-10;
         MoveUp=false;
         SDL_Delay(10);
         if (ypos<0)
         {
-            ypos = ypos + PATH_JUMP;
+            ypos = ypos + 10;
         }
     }
     else if(MoveDown)
     {
-        ypos=ypos+PATH_JUMP;
+        ypos=ypos+10;
         MoveDown=false;
         SDL_Delay(10);
         if (ypos >WINDOW_HEIGHT-CAR_WIDTH)
         {
-            ypos = ypos - PATH_JUMP;
+            ypos = ypos - 10;
         }
     }
     ObjSrcRect.x = 0;
@@ -92,9 +92,9 @@ void GameObject::ObstacleRender()
     SDL_RenderCopy(Game::renderer,objTexture,&ObsSrcRect,&ObsDestRect);
 }
 
-bool GameObject::Collision(SDL_Rect Object1,SDL_Rect Object2)
+bool GameObject::CheckCollision(SDL_Rect Object1,SDL_Rect Object2)
 {
-    if (Object1.x==Object2.x&&Object1.y==Object2.y+240)
+    if (Object1.x==Object2.x&&Object1.y>=Object2.y&&Object1.y<=Object2.y+240)
     {
         return true;
     }
@@ -118,6 +118,8 @@ SDL_Rect GameObject::ObstacleGetRect()
     rect.h = ObsDestRect.h;
     return rect;
 }
+
+
 
 
 
