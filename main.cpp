@@ -13,18 +13,31 @@ int main(int argc,char *argv[])
     static const int WINDOW_HEIGHT = 800;
     static const int WINDOW_WIDTH = 800;
     game ->init("Obstacle",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WINDOW_WIDTH,WINDOW_HEIGHT,false);
-    while (game->running())
+    while(game->running()==true)
+    {
+    while (game->finish==true)
     {
         //frameStart = SDL_GetTicks();
         game -> handleEvents();
-        game ->update();
-        game ->render();
+        //game ->update();
+        game->MenuRender();
+        //game ->render();
         //frameTime = SDL_GetTicks() - frameStart;
         //if (frameDelay > frameTime)
         //{
             //SDL_Delay(frameDelay - frameTime);
-        //}
     }
+    while (game->finish==false)//&&game->MenuInit==true)
+    {
+        game -> handleEvents();
+        game ->update();
+        //game->MenuRender();
+        game ->render();
+
+    }
+    }
+
     return 0;
-}
+    }
+
 
