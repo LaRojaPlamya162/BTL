@@ -44,7 +44,7 @@ void Game::init(const char *title,int xpos,int ypos,int width,int height,bool fu
             std::cout<<"Renderer created"<<std::endl;
         }
         isRunning = true;
-        finish=true;
+        Menuinit=true;
         }
         player =  new GameObject("Car.png",WINDOW_WIDTH,560);
         obstacle = new GameObject("ObstacleCar.png",NULL,NULL);
@@ -53,6 +53,7 @@ void Game::init(const char *title,int xpos,int ypos,int width,int height,bool fu
         audio = new Audio();
         highscoremanager = new HighscoreManager();
         MenuPointer = new Menu();
+        GAME = new Game();
     }
 void Game::handleEvents()
 {
@@ -73,16 +74,12 @@ void Game::handleEvents()
                     player->MoveDown = false;
                     player->MoveLeft = false;
                     player->MoveRight = false;
-                    MenuPointer->MovingUp=true;
-                    MenuPointer->MovingDown=false;
                     break;
                 case SDLK_DOWN:
                     player->MoveUp = false;
                     player->MoveDown = true;
                     player->MoveLeft = false;
                     player->MoveRight = false;
-                    MenuPointer->MovingUp=false;
-                    MenuPointer->MovingDown=true;
                     break;
                 case SDLK_LEFT:
                     player->MoveUp = false;
@@ -96,8 +93,6 @@ void Game::handleEvents()
                     player->MoveLeft = false;
                     player->MoveRight = true;
                     break;
-                case SDLK_RETURN:
-                    MenuPointer->choose = true;
                 default:
                     break;
         }
@@ -114,13 +109,11 @@ void Game::update()
 }
 void Game::MenuRender()
 {
-    SDL_RenderClear(Game::renderer);
-    map ->DrawMap();
+    map->DrawMap();
+    border->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
     //border ->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
-    MenuPointer->RenderMenu(text);
-    MenuPointer->UpdateMenu(text,GAME,map);
+    MenuPointer->loadMenu(GAME,text);
     //border->LoadImageFile("road.png",0,0,800,800);
-    border ->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
     //background->LoadImageFile("road.png",0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
     SDL_RenderPresent(Game::renderer);
 }
