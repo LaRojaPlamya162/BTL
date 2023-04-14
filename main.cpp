@@ -15,27 +15,14 @@ int main(int argc,char *argv[])
     game ->init("Obstacle",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WINDOW_WIDTH,WINDOW_HEIGHT,false);
     while(game->running()==true)
     {
-    while(game->menuInit()==false)
-    {
-        //frameStart = SDL_GetTicks();
-        //game -> handleEvents();
-        //game ->update();
-        //std::cout << game->Menuinit<<std::endl;
-        game->MenuRender();
-        //std::cout << game->Menuinit<<std::endl;
-        //game ->render();
-        //frameTime = SDL_GetTicks() - frameStart;
-        //if (frameDelay > frameTime)
-        //{
-            //SDL_Delay(frameDelay - frameTime);
-        //std::cout <<"Loops"<<std::endl;
-        //break;
-    }
     while(game->menuInit()==true)
+    {
+        game->MenuRender();
+    }
+    while(game->menuInit()==false)
     {
         game -> handleEvents();
         game ->update();
-        //game->MenuRender();
         game ->render();
     }
     }
