@@ -32,25 +32,21 @@ void Game::init(const char *title,int xpos,int ypos,int width,int height,bool fu
         }
         if (SDL_Init(SDL_INIT_EVERYTHING)==0)
         {
-            std::cout<<"Subsystem Intialised!..."<<std::endl;
+            //std::cout<<"Subsystem Intialised!..."<<std::endl;
             window=SDL_CreateWindow(title,xpos,ypos,width,height,flags);
             if (window)
             {
                 SDL_SetRenderDrawColor(renderer,255,255,255,255);
-                std::cout<<"Window created"<<std::endl;
+                //std::cout<<"Window created"<<std::endl;
             }
         renderer = SDL_CreateRenderer(window,-1,0);
-        if (renderer)
+        //if (renderer)
         {
-            std::cout<<"Renderer created"<<std::endl;
+            //std::cout<<"Renderer created"<<std::endl;
         }
         isRunning = true;
         Menuinit=true;
         }
-        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
-    {
-        printf("%s", Mix_GetError());
-    }
         player =  new GameObject("Car.png",668,630);
         obstacle = new GameObject("ObstacleCar.png",NULL,NULL);
         map = new Map();
@@ -180,8 +176,8 @@ void Game::render()
     border ->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
     text->RenderText("OpenSans-Regular.ttf",50,red,DIEM,360,0);
     text->EndGame(diem,highscoremanager->addHighscore(diem),"OpenSans-Bold.ttf",red,player,obstacle);
-    if(text->Finish()==true)isRunning=false;
-    else isRunning=true;
+    if(text->Finish()==true) Menuinit=true;//isRunning=false;
+    else Menuinit=false;//isRunning=true;
     SDL_RenderPresent(Game::renderer);
 }
 void Game::clean()
@@ -195,14 +191,11 @@ void Game::Restart()
 {
     if(text->Finish()==true)
     {
+        SDL_DestroyWindow(window);
+        init("Obstacle",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WINDOW_WIDTH,WINDOW_HEIGHT,false);
         diem=0;
-        player->~GameObject();
-        obstacle->~GameObject();
-        player =  new GameObject("Car.png",668,630);
-        obstacle = new GameObject("ObstacleCar.png",NULL,NULL);
         text->finish=false;
-        }
     }
-
+}
 
 
