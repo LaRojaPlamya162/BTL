@@ -1,8 +1,9 @@
+
 #include "game.h"
 #include "TextureManager.h"
 #include "GameObject.h"
 #include "textobject.h"
-#include "audio.h"
+//#include "audio.h"
 #include "highscore.h"
 #include "Map.h"
 #include "Menu.h"
@@ -12,12 +13,12 @@ Text* text;
 TextureManager* border;
 SDL_Renderer* Game::renderer = nullptr;
 Map* map;
-Audio* audio;
+//Audio* audio;
 Menu* MenuPointer;
-Game* GAME = nullptr;
 HighscoreManager* highscoremanager ;
-TextureManager* background;
-SDL_Color color = {255,255,255};
+SDL_Color yellow = {255,255,0};
+SDL_Color white = {255,255,255};
+SDL_Color red = {255,0,0};
 Game::Game()
 {}
 Game::~Game()
@@ -46,14 +47,17 @@ void Game::init(const char *title,int xpos,int ypos,int width,int height,bool fu
         isRunning = true;
         Menuinit=true;
         }
-        player =  new GameObject("Car.png",WINDOW_WIDTH,560);
+        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1)
+    {
+        printf("%s", Mix_GetError());
+    }
+        player =  new GameObject("Car.png",668,630);
         obstacle = new GameObject("ObstacleCar.png",NULL,NULL);
         map = new Map();
         text = new Text();
-        audio = new Audio();
+        //audio = new Audio();
         highscoremanager = new HighscoreManager();
         MenuPointer = new Menu();
-        GAME = new Game();
     }
 void Game::handleEvents()
 {
@@ -63,10 +67,11 @@ void Game::handleEvents()
     {
     case SDL_QUIT:
         {
-            isRunning = false;
+            isRunning=false;
             break;
         }
     case SDL_KEYDOWN:
+        keyPressed=true;
         switch(event.key.keysym.sym)
         {
                 case SDLK_UP:
@@ -74,12 +79,20 @@ void Game::handleEvents()
                     player->MoveDown = false;
                     player->MoveLeft = false;
                     player->MoveRight = false;
+                    MenuPointer->MovingDown=false;
+                    MenuPointer->MovingUp=true;
+                    MovingDown=false;
+                    MovingUp=true;
                     break;
                 case SDLK_DOWN:
                     player->MoveUp = false;
                     player->MoveDown = true;
                     player->MoveLeft = false;
                     player->MoveRight = false;
+                    MenuPointer->MovingDown=true;
+                    MenuPointer->MovingUp=false;
+                    MovingDown=true;
+                    MovingUp=false;
                     break;
                 case SDLK_LEFT:
                     player->MoveUp = false;
@@ -93,12 +106,15 @@ void Game::handleEvents()
                     player->MoveLeft = false;
                     player->MoveRight = true;
                     break;
+                case SDLK_RETURN:
+                    MenuPointer->choose = true;
+                    choose=true;
+                    break;
                 default:
                     break;
         }
     }
     if(player->MoveDown==true||player->MoveUp==true||player->MoveRight==true||player->MoveLeft==true)dem++;
-    //std::cout<<dem<<" ";
 }
 
 void Game::update()
@@ -108,29 +124,66 @@ void Game::update()
     if(dem>0)diem++;
 }
 void Game::MenuRender()
+
 {
+    SDL_RenderClear(Game::renderer);
     map->DrawMap();
     border->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
-    //border ->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
-    MenuPointer->loadMenu(GAME,text);
-    //border->LoadImageFile("road.png",0,0,800,800);
-    //background->LoadImageFile("road.png",0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
-    SDL_RenderPresent(Game::renderer);
+    Pointer = TextureManager::LoadTexture("pointer.png");
+    PointerSrcRect = {0,0,30,30};
+    PointerDestRect = {200,300,30,30};
+    MenuDestRect = {200,200,400,400};
+    MenuSourceRect = {0,0,400,400};
+    text->RenderText("OpenSans-Bold.ttf",30,yellow,"Exit",300,350);
+    text->RenderText("OpenSans-Bold.ttf",30,yellow,"Start Game",300,450);
+    if(keyPressed==true)
+    {
+        if(MovingUp==true)
+        {
+            PointerDestRect.y = 350;
+            TextureManager::Draw(Pointer, PointerSrcRect, PointerDestRect);
+            if (choose==true)
+            {
+            isRunning=false;
+            Menuinit=false;
+            MovingDown = NULL;
+            MovingUp = NULL;
+            choose = NULL;
+            keyPressed= NULL;
+            exit(0);
+            }
+        }
+    if(MovingDown==true)
+        {
+            PointerDestRect.y = 450;
+            TextureManager::Draw(Pointer, PointerSrcRect, PointerDestRect);
+            if(choose==true)
+            {
+            isRunning=true;
+            Menuinit=false;
+            MovingDown = NULL;
+            MovingUp = NULL;
+            choose = NULL;
+            keyPressed= NULL;
+            }
+        }
+}
+SDL_RenderPresent(Game::renderer);
 }
 void Game::render()
 {
     std::string DIEM = std::to_string(diem);
     SDL_RenderClear(Game::renderer);
-    //background->LoadImageFile("road.png",0,0,WINDOW_WIDTH,WINDOW_HEIGHT);
     map ->DrawMap();
     player->PlayerRender();
     obstacle->ObstacleRender();
     border ->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
-    text->RenderText("OpenSans-Bold.ttf",50,color,DIEM,360,0);
-    text->EndGame(diem,highscoremanager->addHighscore(diem),"OpenSans-Bold.ttf",color,player,obstacle,GAME);
-    //audio->OpenAudio("GameSound.wav");
+    text->RenderText("OpenSans-Regular.ttf",50,red,DIEM,360,0);
+    text->EndGame(diem,highscoremanager->addHighscore(diem),"OpenSans-Bold.ttf",red,player,obstacle);
+    if(text->Finish()==true)isRunning=false;
+    else isRunning=true;
     SDL_RenderPresent(Game::renderer);
-    }
+}
 void Game::clean()
 {
     SDL_DestroyWindow(window);
@@ -138,3 +191,18 @@ void Game::clean()
     SDL_Quit();
     std::cout <<"Game Cleared"<<std::endl;
 }
+void Game::Restart()
+{
+    if(text->Finish()==true)
+    {
+        diem=0;
+        player->~GameObject();
+        obstacle->~GameObject();
+        player =  new GameObject("Car.png",668,630);
+        obstacle = new GameObject("ObstacleCar.png",NULL,NULL);
+        text->finish=false;
+        }
+    }
+
+
+
