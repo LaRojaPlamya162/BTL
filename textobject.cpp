@@ -1,4 +1,3 @@
-//#include <SDL_ttf.h>
 #include "game.h"
 #include "textobject.h"
 Text::Text()
@@ -19,29 +18,27 @@ void Text::RenderText(const char* file,int ptsize,SDL_Color color,std::string s,
     SDL_DestroyTexture(gText);
     SDL_FreeSurface(text);
 }
-void Text::EndGame(int diem,int highscore,const char* filename,SDL_Color color,GameObject* cityzen1,GameObject* cityzen2,Game* GAME)
+void Text::EndGame(int diem,int highscore,const char* filename,SDL_Color color,GameObject* cityzen1,GameObject* cityzen2)
 {
     std::string DIEM = std::to_string(diem);
-    if (diem==highscore&&cityzen1->Finish())
+    if (diem>highscore&&cityzen1->CheckCollision(cityzen1->PlayerGetRect(),cityzen2->ObstacleGetRect()))
     {
-        //SDL_RenderClear(Game::renderer);
         SDL_Delay(2000);
-        RenderText(filename,50,color,"New Record",250,380);
-        RenderText(filename,40,color,DIEM,320,350);
+        RenderText(filename,50,color,"New Record",250,350);
+        RenderText(filename,40,color,DIEM,350,500);
         SDL_RenderPresent(Game::renderer);
         SDL_Delay(5000);
-        GAME->finish=true;
+        finish=true;
     }
-    else if (diem<highscore&&cityzen1->CheckCollision(cityzen1->PlayerGetRect(),cityzen2->ObstacleGetRect()))
+    else if (diem<=highscore&&cityzen1->CheckCollision(cityzen1->PlayerGetRect(),cityzen2->ObstacleGetRect()))
     {
-        //SDL_RenderClear(Game::renderer);
         SDL_Delay(2000);
-        //RenderText(filename,50,color,"New Record",380,380);
         RenderText(filename,50,color,"Your Score",250,350);
-        RenderText(filename,40,color,DIEM,450,500);
+        RenderText(filename,40,color,DIEM,350,500);
         SDL_RenderPresent(Game::renderer);
         SDL_Delay(5000);
-        GAME->finish=true;
+        finish=true;
+
     }
 }
 
