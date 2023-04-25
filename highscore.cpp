@@ -1,7 +1,9 @@
 #include <fstream>
 #include "highscore.h"
 #include "game.h"
+#include "GameObject.h"
 using namespace std;
+SDL_Color CoLor = {255,255,255};
 HighscoreManager::HighscoreManager()
 {
     ifstream infile("highscore.txt");
@@ -10,23 +12,25 @@ HighscoreManager::HighscoreManager()
         cout <<"Initialize error!";
     }
 }
-bool HighscoreManager::addHighscore(int diem)
+int HighscoreManager::addHighscore(int diem)
 {
-    int highscore;
     ifstream infile("highscore.txt");
     if(infile)
     {
         infile >> highscore;
         ofstream outfile("highscore.txt");
-        if (diem>highscore)
-        {
-            outfile << diem;
-            return true;
-        }
-        else return false;
+            if (diem>highscore)
+            {
+                outfile << diem;
+            }
+            else
+            {
+                outfile << highscore;
+            }
     }
-
+    return highscore;
 }
+
 
 
 
