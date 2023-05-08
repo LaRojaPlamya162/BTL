@@ -1,4 +1,3 @@
-
 #include "game.h"
 #include "TextureManager.h"
 #include "GameObject.h"
@@ -115,7 +114,7 @@ void Game::handleEvents()
 
 void Game::update()
 {
-    obstacle->ObstacleUpdate(player);
+    obstacle->ObstacleUpdate(player,diem);
     player->PlayerUpdate();
     if(dem>0)diem++;
 }
@@ -127,9 +126,7 @@ void Game::MenuRender()
     border->Appear(WINDOW_HEIGHT,WINDOW_WIDTH);
     Pointer = TextureManager::LoadTexture("pointer.png");
     PointerSrcRect = {0,0,30,30};
-    PointerDestRect = {200,300,30,30};
-    MenuDestRect = {200,200,400,400};
-    MenuSourceRect = {0,0,400,400};
+    PointerDestRect = {500,300,30,30};
     text->RenderText("OpenSans-Bold.ttf",30,yellow,"Exit",300,350);
     text->RenderText("OpenSans-Bold.ttf",30,yellow,"Start Game",300,450);
     if(keyPressed==true)
@@ -191,9 +188,15 @@ void Game::Restart()
 {
     if(text->Finish()==true)
     {
-        SDL_DestroyWindow(window);
-        init("Obstacle",SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,WINDOW_WIDTH,WINDOW_HEIGHT,false);
+        player =  new GameObject("Car.png",668,630);
+        obstacle = new GameObject("ObstacleCar.png",NULL,NULL);
+        map = new Map();
+        text = new Text();
+        //audio = new Audio();
+        highscoremanager = new HighscoreManager();
+        //MenuPointer = new Menu();
         diem=0;
+        dem=0;
         text->finish=false;
     }
 }
