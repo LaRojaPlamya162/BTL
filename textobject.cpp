@@ -3,6 +3,9 @@
 Text::Text()
 {
 }
+Text::~Text()
+{
+}
 void Text::RenderText(const char* file,int ptsize,SDL_Color color,std::string s,int x,int y)
 {
     font = TTF_OpenFont(file,ptsize);
@@ -21,6 +24,7 @@ void Text::RenderText(const char* file,int ptsize,SDL_Color color,std::string s,
 void Text::EndGame(int diem,int highscore,const char* filename,SDL_Color color,GameObject* cityzen1,GameObject* cityzen2)
 {
     std::string DIEM = std::to_string(diem);
+    std::string HIGHSCORE = std::to_string(highscore);
     if (diem>highscore&&cityzen1->CheckCollision(cityzen1->PlayerGetRect(),cityzen2->ObstacleGetRect()))
     {
         SDL_Delay(2000);
@@ -33,12 +37,13 @@ void Text::EndGame(int diem,int highscore,const char* filename,SDL_Color color,G
     else if (diem<=highscore&&cityzen1->CheckCollision(cityzen1->PlayerGetRect(),cityzen2->ObstacleGetRect()))
     {
         SDL_Delay(2000);
-        RenderText(filename,50,color,"Your Score",250,350);
-        RenderText(filename,40,color,DIEM,350,500);
+        RenderText(filename,40,color,"Your Score: ",250,250);
+        RenderText(filename,40,color,DIEM,500,250);
+        RenderText(filename,40,color,"Highscore:",250,500);
+        RenderText(filename,40,color,HIGHSCORE,500,500);
         SDL_RenderPresent(Game::renderer);
         SDL_Delay(5000);
         finish=true;
 
     }
 }
-
