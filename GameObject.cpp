@@ -2,14 +2,18 @@
 #include "TextureManager.h"
 #include <ctime>
 #include <cstdlib>
-int ToaDo[5]={0,160,320,480,640};
+int ToaDo[5]={28,188,348,508,668};
 GameObject::GameObject(const char *texturesheet,int x,int y)
 {
 objTexture = TextureManager::LoadTexture(texturesheet);
 xpos = x;
 ypos = y;
-ObsDestRect = {0,0,160,240};
-ObjDestRect = {0,0,160,560};
+ObsDestRect = {28,0,124,180};
+ObjDestRect = {0,0,124,560};
+}
+GameObject::~GameObject()
+{
+    delete objTexture;
 }
 void GameObject::PlayerUpdate()
 {
@@ -49,36 +53,58 @@ void GameObject::PlayerUpdate()
         ypos=ypos+10;
         MoveDown=false;
         SDL_Delay(10);
-        if (ypos >WINDOW_HEIGHT-CAR_WIDTH)
+        if (ypos >WINDOW_HEIGHT-CAR_LENGTH)
         {
-            ypos = ypos - 10;
+            ypos = ypos-10;
         }
     }
     ObjSrcRect.x = 0;
+    ObjSrcRect.y = 0;
     ObjSrcRect.w = CAR_WIDTH;
     ObjSrcRect.h = CAR_LENGTH;
-    ObjSrcRect.y = 0;
     ObjDestRect.x = xpos;
-    ObjDestRect.y = ypos;;
+    ObjDestRect.y = ypos;
     ObjDestRect.w = CAR_WIDTH;
     ObjDestRect.h = CAR_LENGTH;
 }
-void GameObject::ObstacleUpdate()
+void GameObject::ObstacleUpdate(GameObject* Player, int diem)
 {
-    srand(time(0));
-    ObsSrcRect = {0,0,160,240};
-    SDL_Delay(10);
-    ObsDestRect.y = ObsDestRect.y+yVelocity;
-     if (ObsDestRect.y -160>=WINDOW_HEIGHT&&yVelocity<=maxVelocity)
+    if(Player->MoveDown==true||Player->MoveUp==true||Player->MoveRight==true||Player->MoveLeft==true)dem++;
+    if(dem>0)
     {
-        int Ran_Num = rand()% 5;
-        ObsDestRect.x = ToaDo[Ran_Num];
+    srand(time(0));
+    SDL_Delay(10);
+    ObsSrcRect = {0,0,124,170};
+    ObsDestRect.y = ObsDestRect.y+yVelocity;
+    if(diem>2000)
+    {
+    if(DIEM>0)
+    {
+      DIEM--;
+    }
+    if(DIEM==0)
+    {
+        int Ran_Num1 = rand()% 5;
+        ObsDestRect.x= ToaDo[Ran_Num1];
+        DIEM=DEM;
+        DEM=DEM-5;
+    }
+    if(DEM<100)
+    {
+        DEM=100;
+    }
+    }
+    if (ObsDestRect.y-170>=WINDOW_HEIGHT)
+    {
+        int Ran_Num2 = rand()% 5;
+        ObsDestRect.x = ToaDo[Ran_Num2];
         yVelocity++;
         ObsDestRect.y=0;
     }
     if (yVelocity>maxVelocity)
     {
         yVelocity = maxVelocity;
+    }
     }
 }
 
@@ -94,11 +120,12 @@ void GameObject::ObstacleRender()
 
 bool GameObject::CheckCollision(SDL_Rect Object1,SDL_Rect Object2)
 {
-    if (Object1.x==Object2.x&&Object1.y>=Object2.y&&Object1.y<=Object2.y+240)
+    if((Object1.x==Object2.x&&Object1.y>=Object2.y&&Object1.y<=Object2.y+170)||(Object1.x==Object2.x&&Object1.y+170<=Object2.y+170&&Object1.y+170>=Object2.y))
     {
-        return true;
+        finish = true;
     }
-    else return false;
+    else finish = false;
+    return finish;
 }
 SDL_Rect GameObject::PlayerGetRect()
 {
@@ -118,6 +145,11 @@ SDL_Rect GameObject::ObstacleGetRect()
     rect.h = ObsDestRect.h;
     return rect;
 }
+bool GameObject::Finish()
+{
+    return CheckCollision(PlayerGetRect(),ObstacleGetRect());
+}
+
 
 
 
